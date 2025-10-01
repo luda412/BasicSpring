@@ -7,9 +7,11 @@ spring:
     username: root
     password: Luda0412!@
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   sql:
     init:
       mode: always
+
   jpa:
     show-sql: true
     generate-ddl: true
