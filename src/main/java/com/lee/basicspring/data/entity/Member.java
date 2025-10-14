@@ -20,10 +20,10 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    private String id;
+    private String loginId;
+    private String password;
+    private String nickname;
 
-    private String name;
-
-    private String phoneNumber;
+    private MemberRole role;
     
 }
