@@ -3,5 +3,10 @@ package com.lee.basicspring.service;
 import com.lee.basicspring.data.dto.JoinRequest;
 
 public interface MemberService {
-    String join(JoinRequest joinRequest);
+    boolean checkLoginIdDuplicate (String LoginId);
+
+    boolean checkNicknameDuplicate (String nickname);
+
+    void join(JoinRequest req);
+
 }

@@ -24,18 +24,9 @@ public class JoinRequest {
     @NotBlank(message="닉네임이 비어있습니다.")
     private String nickname;
     
-    // 비밀번호 암호화 전
-    public Member toEntity(){
-        return Member.builder()
-            .loginId(this.loginId)
-            .password(this.password)
-            .nickname(this.nickname)
-            .role(MemberRole.USER)
-            .build();
-    }
 
     // 비밀 번호 암호화
-    public Member toEntity(encodeedPassword){
+    public Member toEntity(String encodedPassword){
         return Member.builder()
             .loginId(this.loginId)
             .password(encodedPassword)
