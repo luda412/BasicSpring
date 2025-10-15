@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lee.basicspring.controller.dto.JoinRequest;
+import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.service.MemberService;
 
 import lombok.RequiredArgsConstructor;

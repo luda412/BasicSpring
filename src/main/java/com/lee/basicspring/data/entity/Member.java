@@ -1,5 +1,7 @@
 package com.lee.basicspring.data.entity;
 
+import com.lee.basicspring.data.entity.type.MemberRole;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

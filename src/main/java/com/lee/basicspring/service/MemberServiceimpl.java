@@ -2,7 +2,7 @@ package com.lee.basicspring.service;
 
 import org.springframework.stereotype.Service;
 
-import com.lee.basicspring.controller.dto.JoinRequest;
+import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.repository.MemberRepository;
 
