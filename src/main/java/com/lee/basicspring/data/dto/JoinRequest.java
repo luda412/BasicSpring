@@ -25,6 +25,16 @@ public class JoinRequest {
     private String nickname;
     
 
+    // 비밀 번호 
+    public Member toEntity(){
+        return Member.builder()
+            .loginId(this.loginId)
+            .password(this.password)
+            .nickname(this.nickname)
+            .role(MemberRole.USER)
+            .build();
+    }
+
     // 비밀 번호 암호화
     public Member toEntity(String encodedPassword){
         return Member.builder()
