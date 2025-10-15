@@ -1,5 +1,7 @@
 package com.lee.basicspring.data.entity;
 
+import com.lee.basicspring.data.entity.type.MemberRole;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,10 +22,10 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    private String id;
+    private String loginId;
+    private String password;
+    private String nickname;
 
-    private String name;
-
-    private String phoneNumber;
+    private MemberRole role;
     
 }
