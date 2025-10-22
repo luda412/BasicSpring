@@ -19,8 +19,12 @@ import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.service.MemberServiceimpl;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+
 
 
 
@@ -122,6 +126,37 @@ public class CookieController {
         model.addAttribute("loginRequest", new LoginRequest());
         
         return "login";
+    }
+    
+    /* 
+     * Request login page Post Mapping
+     * create cookie 60*60
+     */
+    @PostMapping("/login")
+    public String postMethodName(@ModelAttribute LoginRequest loginRequest, 
+        BindingResult bindingResult, HttpServletResponse response, Model model) {
+        
+        model.addAttribute("loginType","cookie-login");
+        model.addAttribute("pageName","쿠키 로그인");
+
+        Member member = memberServiceimpl.login(loginRequest);
+        
+        // member가 존재 하지 않거나 password, passwordCheck이 일치하지 않을 경우 service에서 null을 반환
+        if(member == null){
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        if(bindingResult.hasErrors()){
+            return "login";
+        }
+
+        //if success login => create cookie
+        Cookie cookie = new Cookie("memberId", String.valueOf(member.getMemberId()));
+        cookie.setMaxAge(60*60);;
+        response.addCookie(cookie);
+
+
+        return "redirect:/cookie-login";
     }
     
     
