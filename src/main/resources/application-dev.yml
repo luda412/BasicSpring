@@ -21,6 +21,16 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    root: info
+  # file:
+  #   name: application.log
+  #   path: ./logs
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 # springdoc:
 #   swagger-ui:
 #     operations-sorter: alpha(알파멧 오름차순), method(HTTP메소드순)

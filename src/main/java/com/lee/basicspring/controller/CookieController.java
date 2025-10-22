@@ -1,5 +1,9 @@
 package com.lee.basicspring.controller;
 
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +21,7 @@ import com.lee.basicspring.service.MemberServiceimpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CookieController {
 
     private final MemberServiceimpl memberServiceimpl;
+    private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
 
     /* 
      * localhost:8080 요청에 대한 처리 home controller
@@ -47,6 +52,7 @@ public class CookieController {
             model.addAttribute("nickname", loginMember.getNickname());
             loginMember.getNickname();
         }
+        LOGGER.info("=========================");
         
         return "home";
     }
@@ -59,7 +65,7 @@ public class CookieController {
         
         model.addAttribute("loginType", "cookie-login");
         model.addAttribute("pageName", "쿠키 로그인");
-
+        
         model.addAttribute("joinRequest",new JoinRequest());
 
         return "join";
@@ -78,6 +84,7 @@ public class CookieController {
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
         model.addAttribute("loginType", "cookie-login");
         model.addAttribute("pageName", "쿠키 로그인");
+        LOGGER.info("join post mapping 전역 log");
 
         //loingId duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
         if(memberServiceimpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
@@ -116,6 +123,7 @@ public class CookieController {
         
         return "login";
     }
+    
     
     
     
