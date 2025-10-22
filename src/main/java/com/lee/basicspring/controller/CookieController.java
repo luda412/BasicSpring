@@ -64,6 +64,12 @@ public class CookieController {
     
     /* 
      * 회원 가입 요청, dto에 담아서 post 요청
+    * Check if the loginId already exists (duplicate)
+    * Check if the nickName already exists (duplicate)
+    * Check if password and passwordCheck are the same
+
+    * If there are any errors, return "join".
+    * Otherwise, redirect to "/cookie-login".
      */
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
@@ -94,6 +100,7 @@ public class CookieController {
         return "redirect:/cookie-login";
     }
     
+
     
     
 }
