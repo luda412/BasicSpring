@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.lee.basicspring.data.dto.JoinRequest;
+import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.service.MemberServiceimpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -100,7 +103,20 @@ public class CookieController {
         return "redirect:/cookie-login";
     }
     
+    /* 
+     * Request login page Get Mapping
+     * return login.html
+     */
+    @GetMapping("/login")
+    public String loginPage(Model model) {
+        model.addAttribute("loginType", "cookie-login");
+        model.addAttribute("pageName", "쿠키 로그인");
 
+        model.addAttribute("loginRequest", new LoginRequest());
+        
+        return "login";
+    }
+    
     
     
 }
