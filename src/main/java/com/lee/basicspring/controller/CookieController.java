@@ -1,7 +1,5 @@
 package com.lee.basicspring.controller;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.lee.basicspring.common.ControllerHelper;
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
@@ -24,21 +23,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-
-
-
-
-
-
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cookie-login")
-public class CookieController {
+public class CookieController extends ControllerHelper{
+    
 
     private final MemberServiceimpl memberServiceimpl;
     private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
-
+    
     /* 
      * localhost:8080 요청에 대한 처리 home controller
      * 조작 view loginType, pageName
@@ -47,8 +40,7 @@ public class CookieController {
     @GetMapping(value={"", "/"})
     public String home(@CookieValue(name="memberId", required=false) Long memberId, Model model) {
         
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
 
         Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
 
@@ -67,8 +59,7 @@ public class CookieController {
     @GetMapping("/join")
     public String joinPage(Model model) {
         
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
         
         model.addAttribute("joinRequest",new JoinRequest());
 
@@ -86,8 +77,7 @@ public class CookieController {
      */
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
         LOGGER.info("join post mapping 전역 log");
 
         //loingId duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
@@ -120,8 +110,7 @@ public class CookieController {
      */
     @GetMapping("/login")
     public String loginPage(Model model) {
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
 
         model.addAttribute("loginRequest", new LoginRequest());
         
@@ -136,8 +125,7 @@ public class CookieController {
     public String postMethodName(@ModelAttribute LoginRequest loginRequest, 
         BindingResult bindingResult, HttpServletResponse response, Model model) {
         
-        model.addAttribute("loginType","cookie-login");
-        model.addAttribute("pageName","쿠키 로그인");
+        setCookieAttributes(model);
 
         Member member = memberServiceimpl.login(loginRequest);
         
@@ -159,7 +147,22 @@ public class CookieController {
         return "redirect:/cookie-login";
     }
     
-    
+    /* 
+     * logout
+     * expires cookie
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response, Model model) {
+        
+        setCookieAttributes(model);
+
+        Cookie cookie = new Cookie("memberId", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
+        return "redirect:/cookie-login";
+    }
+
     
     
 }
