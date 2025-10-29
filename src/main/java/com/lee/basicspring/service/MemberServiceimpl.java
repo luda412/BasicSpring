@@ -41,6 +41,7 @@ public class MemberServiceimpl implements MemberService{
      */
     @Override
     public void join(JoinRequest req) {
+        // req.set
         memberRepository.save(req.toEntity());
     }
 
@@ -78,10 +79,10 @@ public class MemberServiceimpl implements MemberService{
      * 
      */
     @Override
-    public Member getLoginMemberById(Long MemberId) {
-        if(MemberId == null) return null;
+    public Member getLoginMemberById(Long memberId) {
+        if(memberId == null) return null;
 
-        Optional<Member> optionalMember = memberRepository.findById(MemberId);
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
         if(optionalMember.isEmpty()) return null;
 
         return optionalMember.get();

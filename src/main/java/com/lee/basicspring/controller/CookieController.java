@@ -16,12 +16,15 @@ import com.lee.basicspring.common.ControllerHelper;
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
+import com.lee.basicspring.data.entity.type.MemberRole;
 import com.lee.basicspring.service.MemberServiceimpl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+
 
 @Controller
 @RequiredArgsConstructor
@@ -140,7 +143,7 @@ public class CookieController extends ControllerHelper{
 
         //if success login => create cookie
         Cookie cookie = new Cookie("memberId", String.valueOf(member.getMemberId()));
-        cookie.setMaxAge(60*60);;
+        cookie.setMaxAge(60*60);
         response.addCookie(cookie);
 
 
@@ -154,6 +157,7 @@ public class CookieController extends ControllerHelper{
     @GetMapping("/logout")
     public String logout(HttpServletResponse response, Model model) {
         
+        LOGGER.info("로그아웃 컨트롤러 호출 확인");
         setCookieAttributes(model);
 
         Cookie cookie = new Cookie("memberId", null);
@@ -163,6 +167,50 @@ public class CookieController extends ControllerHelper{
         return "redirect:/cookie-login";
     }
 
+    /* 
+     * member information page
+     */
+    @GetMapping("/info")
+    public String memberInfo(@CookieValue(name ="memberId", required = false) Long memberId, Model model) {
+        
+        LOGGER.info("유저 페이지 호출 확인=========================");
+        // LOGGER.info("Raw cookie memberId = {}", cookie.memberId);
+
+        setCookieAttributes(model);
+
+        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+
+        // LOGGER.info(loginMember.memberId);
+
+        if(loginMember == null){
+            return "redirect:/cookie-login/login";
+        }
+
+        model.addAttribute("user", loginMember);
+
+        return "info";
+    }
+
+    /* 
+     * admin Page
+     */
+    @GetMapping("/admin")
+    public String adminPage(@CookieValue(name = "memberId", required=false)Long memberId, Model model) {
+        setCookieAttributes(model);
+
+        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+
+        if(loginMember == null){
+            return "redirect:/cookie-login/login";
+        }
+
+        if(!loginMember.getRole().equals(MemberRole.ADMIN)){
+            return "redirect:cookie-login";
+        }
+
+        return "admin";
+    }
+    
     
     
 }
