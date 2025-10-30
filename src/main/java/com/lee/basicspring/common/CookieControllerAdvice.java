@@ -8,7 +8,7 @@ import com.lee.basicspring.controller.CookieController;
 
 
 @ControllerAdvice(assignableTypes = CookieController.class)
-public abstract class CookieControllerAdvice {
+public class CookieControllerAdvice {
     
     //공통적인 model 값 분리
     @ModelAttribute
