@@ -1,5 +1,7 @@
 package com.lee.basicspring.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,23 +12,29 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.lee.basicspring.common.ControllerHelper;
 import com.lee.basicspring.data.dto.JoinRequest;
+import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
+import com.lee.basicspring.data.entity.type.MemberRole;
 import com.lee.basicspring.service.MemberServiceimpl;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 
 
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cookie-login")
-public class CookieController {
+public class CookieController extends ControllerHelper{
+    
 
     private final MemberServiceimpl memberServiceimpl;
-
+    private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
+    
     /* 
      * localhost:8080 요청에 대한 처리 home controller
      * 조작 view loginType, pageName
@@ -35,8 +43,7 @@ public class CookieController {
     @GetMapping(value={"", "/"})
     public String home(@CookieValue(name="memberId", required=false) Long memberId, Model model) {
         
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
 
         Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
 
@@ -44,6 +51,7 @@ public class CookieController {
             model.addAttribute("nickname", loginMember.getNickname());
             loginMember.getNickname();
         }
+        LOGGER.info("=========================");
         
         return "home";
     }
@@ -54,9 +62,8 @@ public class CookieController {
     @GetMapping("/join")
     public String joinPage(Model model) {
         
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
-
+        setCookieAttributes(model);
+        
         model.addAttribute("joinRequest",new JoinRequest());
 
         return "join";
@@ -64,11 +71,17 @@ public class CookieController {
     
     /* 
      * 회원 가입 요청, dto에 담아서 post 요청
+    * Check if the loginId already exists (duplicate)
+    * Check if the nickName already exists (duplicate)
+    * Check if password and passwordCheck are the same
+
+    * If there are any errors, return "join".
+    * Otherwise, redirect to "/cookie-login".
      */
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
-        model.addAttribute("loginType", "cookie-login");
-        model.addAttribute("pageName", "쿠키 로그인");
+        setCookieAttributes(model);
+        LOGGER.info("join post mapping 전역 log");
 
         //loingId duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
         if(memberServiceimpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
@@ -92,6 +105,110 @@ public class CookieController {
 
         memberServiceimpl.join(joinRequest);
         return "redirect:/cookie-login";
+    }
+    
+    /* 
+     * Request login page Get Mapping
+     * return login.html
+     */
+    @GetMapping("/login")
+    public String loginPage(Model model) {
+        setCookieAttributes(model);
+
+        model.addAttribute("loginRequest", new LoginRequest());
+        
+        return "login";
+    }
+    
+    /* 
+     * Request login page Post Mapping
+     * create cookie 60*60
+     */
+    @PostMapping("/login")
+    public String loginRequest(@ModelAttribute LoginRequest loginRequest, 
+        BindingResult bindingResult, HttpServletResponse response, Model model) {
+        
+        setCookieAttributes(model);
+
+        Member member = memberServiceimpl.login(loginRequest);
+        
+        // member가 존재 하지 않거나 password, passwordCheck이 일치하지 않을 경우 service에서 null을 반환
+        if(member == null){
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        if(bindingResult.hasErrors()){
+            return "login";
+        }
+
+        //if success login => create cookie
+        Cookie cookie = new Cookie("memberId", String.valueOf(member.getMemberId()));
+        cookie.setMaxAge(60*60);
+        response.addCookie(cookie);
+
+
+        return "redirect:/cookie-login";
+    }
+    
+    /* 
+     * logout
+     * expires cookie
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response, Model model) {
+        
+        LOGGER.info("로그아웃 컨트롤러 호출 확인");
+        setCookieAttributes(model);
+
+        Cookie cookie = new Cookie("memberId", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
+        return "redirect:/cookie-login";
+    }
+
+    /* 
+     * member information page
+     */
+    @GetMapping("/info")
+    public String memberInfo(@CookieValue(name ="memberId", required = false) Long memberId, Model model) {
+        
+        LOGGER.info("유저 페이지 호출 확인=========================");
+        // LOGGER.info("Raw cookie memberId = {}", cookie.memberId);
+
+        setCookieAttributes(model);
+
+        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+
+        // LOGGER.info(loginMember.memberId);
+
+        if(loginMember == null){
+            return "redirect:/cookie-login/login";
+        }
+
+        model.addAttribute("user", loginMember);
+
+        return "info";
+    }
+
+    /* 
+     * admin Page
+     */
+    @GetMapping("/admin")
+    public String adminPage(@CookieValue(name = "memberId", required=false)Long memberId, Model model) {
+        setCookieAttributes(model);
+
+        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+
+        if(loginMember == null){
+            return "redirect:/cookie-login/login";
+        }
+
+        if(!loginMember.getRole().equals(MemberRole.ADMIN)){
+            return "redirect:cookie-login";
+        }
+
+        return "admin";
     }
     
     

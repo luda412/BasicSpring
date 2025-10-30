@@ -2,7 +2,6 @@ package com.lee.basicspring.service;
 
 import java.util.Optional;
 
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lee.basicspring.data.dto.JoinRequest;
@@ -42,6 +41,7 @@ public class MemberServiceimpl implements MemberService{
      */
     @Override
     public void join(JoinRequest req) {
+        // req.set
         memberRepository.save(req.toEntity());
     }
 
@@ -54,7 +54,7 @@ public class MemberServiceimpl implements MemberService{
     // }
 
     /* 
-     * 
+     * member 가 없어도 null, 비밀번호가 같지 않아도 null 이니까 넘기는 controller로 넘기는 값이 null로 같으면 안됨.
      */
     @Override
     public Member login(LoginRequest req) {
@@ -79,10 +79,10 @@ public class MemberServiceimpl implements MemberService{
      * 
      */
     @Override
-    public Member getLoginMemberById(Long MemberId) {
-        if(MemberId == null) return null;
+    public Member getLoginMemberById(Long memberId) {
+        if(memberId == null) return null;
 
-        Optional<Member> optionalMember = memberRepository.findById(MemberId);
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
         if(optionalMember.isEmpty()) return null;
 
         return optionalMember.get();

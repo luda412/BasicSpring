@@ -31,7 +31,7 @@ public class JoinRequest {
             .loginId(this.loginId)
             .password(this.password)
             .nickname(this.nickname)
-            .role(MemberRole.USER)
+            .role(MemberRole.USER)//ADMIN으로 변경할 시 DB에 role 1로 저장, USER로 변경시 DB에 role0으로 저장, 이걸 코드로 건드리는 것이 아니라 구조적으로 변경하는 방법 필요.
             .build();
     }
 
