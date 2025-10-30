@@ -1,5 +1,7 @@
 package com.lee.basicspring.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.lee.basicspring.data.dto.JoinRequest;
@@ -15,8 +18,12 @@ import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.service.MemberServiceImpl;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+
 
 
 
@@ -26,7 +33,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/session-login")
 public class SessionController {
+
     private final MemberServiceImpl memberServiceImpl;
+    private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
 
     /* 
      * home page get request
@@ -103,6 +112,53 @@ public class SessionController {
      * Request login page Post Mapping
      * create Session 
      */
+    @PostMapping("/login")
+    public String login(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult, HttpServletRequest httpServletRequest, Model model) {
+        Member member = memberServiceImpl.login(loginRequest);
+
+        // 로그인 아이디나 비밀번호가 틀린 경우 global error return
+        if(member == null){
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        if(bindingResult.hasErrors()){
+            return "login";
+        }
+
+        //로그인 성공 -> 세션 생성
+        httpServletRequest.getSession().invalidate();
+        HttpSession session = httpServletRequest.getSession(true);
+        //세션에 memberId 를 넣어준다.
+        session.setAttribute("memberId", member.getLoginId());
+        session.setMaxInactiveInterval(1800); //30분 동안 유지
+
+        return "redirect:/session-login";
+
+    }
+
+    /* 
+     * Logout - GET
+     */
+    @GetMapping("/logout")
+    public String logout(@RequestParam String param) {
+        return new String();
+    }
+
+    /* 
+     * info - GET
+     */
+    @GetMapping("/info")
+    public String infoPage(@RequestParam String param) {
+        return new String();
+    }
+    
+    /* 
+     * admin - GET
+     */
+    @GetMapping("/admin")
+    public String adminPage(@RequestParam String param) {
+        return new String();
+    }
     
     
 
