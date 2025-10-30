@@ -125,7 +125,7 @@ public class CookieController extends ControllerHelper{
      * create cookie 60*60
      */
     @PostMapping("/login")
-    public String postMethodName(@ModelAttribute LoginRequest loginRequest, 
+    public String loginRequest(@ModelAttribute LoginRequest loginRequest, 
         BindingResult bindingResult, HttpServletResponse response, Model model) {
         
         setCookieAttributes(model);
