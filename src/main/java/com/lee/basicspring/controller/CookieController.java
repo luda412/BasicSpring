@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.lee.basicspring.common.ControllerHelper;
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
@@ -29,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cookie-login")
-public class CookieController extends ControllerHelper{
+public class CookieController{
     
 
     private final MemberServiceimpl memberServiceimpl;
@@ -42,8 +41,6 @@ public class CookieController extends ControllerHelper{
      */
     @GetMapping(value={"", "/"})
     public String home(@CookieValue(name="memberId", required=false) Long memberId, Model model) {
-        
-        setCookieAttributes(model);
 
         Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
 
@@ -62,8 +59,6 @@ public class CookieController extends ControllerHelper{
     @GetMapping("/join")
     public String joinPage(Model model) {
         
-        setCookieAttributes(model);
-        
         model.addAttribute("joinRequest",new JoinRequest());
 
         return "join";
@@ -80,7 +75,6 @@ public class CookieController extends ControllerHelper{
      */
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
-        setCookieAttributes(model);
         LOGGER.info("join post mapping 전역 log");
 
         //loingId duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
@@ -113,7 +107,6 @@ public class CookieController extends ControllerHelper{
      */
     @GetMapping("/login")
     public String loginPage(Model model) {
-        setCookieAttributes(model);
 
         model.addAttribute("loginRequest", new LoginRequest());
         
@@ -127,8 +120,6 @@ public class CookieController extends ControllerHelper{
     @PostMapping("/login")
     public String loginRequest(@ModelAttribute LoginRequest loginRequest, 
         BindingResult bindingResult, HttpServletResponse response, Model model) {
-        
-        setCookieAttributes(model);
 
         Member member = memberServiceimpl.login(loginRequest);
         
@@ -158,7 +149,6 @@ public class CookieController extends ControllerHelper{
     public String logout(HttpServletResponse response, Model model) {
         
         LOGGER.info("로그아웃 컨트롤러 호출 확인");
-        setCookieAttributes(model);
 
         Cookie cookie = new Cookie("memberId", null);
         cookie.setMaxAge(0);
@@ -175,8 +165,6 @@ public class CookieController extends ControllerHelper{
         
         LOGGER.info("유저 페이지 호출 확인=========================");
         // LOGGER.info("Raw cookie memberId = {}", cookie.memberId);
-
-        setCookieAttributes(model);
 
         Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
 
@@ -196,7 +184,6 @@ public class CookieController extends ControllerHelper{
      */
     @GetMapping("/admin")
     public String adminPage(@CookieValue(name = "memberId", required=false)Long memberId, Model model) {
-        setCookieAttributes(model);
 
         Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
 
