@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.lee.basicspring.data.dto.JoinRequest;
+import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.service.MemberServiceimpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 
 
 
@@ -85,8 +87,19 @@ public class SessionController {
         //service를 통해 입력받은 member 정보 DB에 저장후 session-login(즉, home) 으로 redirect
         memberServiceimpl.join(joinRequest);
         return "redirect:/session-login";
-
     }
+
+    /* 
+     * Request login Page Get Mapping
+     * return login.html
+     */
+    @GetMapping("/login")
+    public String loginPage(Model model) {
+        model.addAttribute("loginRequest", new LoginRequest());
+        return "login";
+    }
+    
+
     
     
 
