@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
-import com.lee.basicspring.service.MemberServiceimpl;
+import com.lee.basicspring.service.MemberServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/session-login")
 public class SessionController {
-    private final MemberServiceimpl memberServiceimpl;
+    private final MemberServiceImpl memberServiceImpl;
 
     /* 
      * home page get request
@@ -35,7 +35,7 @@ public class SessionController {
     @GetMapping(value={"", "/"})
     public String home(Model model, @SessionAttribute(name="memberId", required=false) Long memberId) {
 
-        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
 
         if(loginMember != null){
             model.addAttribute("nickname", loginMember.getNickname());
@@ -66,12 +66,12 @@ public class SessionController {
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
         
         //loginId 중복 체크
-        if(memberServiceimpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
+        if(memberServiceImpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
             bindingResult.addError(new FieldError("joinRequest","loginId", "로그인 아이디가 중복됩니다."));
         }
         
         //닉네임 중복 체크
-        if(memberServiceimpl.checkNicknameDuplicate(joinRequest.getNickname())){
+        if(memberServiceImpl.checkNicknameDuplicate(joinRequest.getNickname())){
             bindingResult.addError(new FieldError("joinRequest","nickname", "닉네입이 중복됩니다."));
         }
 
@@ -85,7 +85,7 @@ public class SessionController {
         }
 
         //service를 통해 입력받은 member 정보 DB에 저장후 session-login(즉, home) 으로 redirect
-        memberServiceimpl.join(joinRequest);
+        memberServiceImpl.join(joinRequest);
         return "redirect:/session-login";
     }
 
@@ -99,7 +99,10 @@ public class SessionController {
         return "login";
     }
     
-
+    /* 
+     * Request login page Post Mapping
+     * create Session 
+     */
     
     
 

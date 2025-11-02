@@ -16,7 +16,7 @@ import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.data.entity.type.MemberRole;
-import com.lee.basicspring.service.MemberServiceimpl;
+import com.lee.basicspring.service.MemberServiceImpl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class CookieController{
     
 
-    private final MemberServiceimpl memberServiceimpl;
+    private final MemberServiceImpl memberServiceimpl;
     private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
     
     /* 
