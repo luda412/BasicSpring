@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.lee.basicspring.common.CookieControllerAdvice;
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
@@ -32,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class CookieController {
     
 
-    private final MemberServiceImpl memberServiceimpl;
+    private final MemberServiceImpl memberServiceImpl;
     private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
     
     /* 
@@ -43,7 +42,7 @@ public class CookieController {
     @GetMapping(value={"", "/"})
     public String home(@CookieValue(name="memberId", required=false) Long memberId, Model model) {
 
-        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
 
         if(loginMember != null){
             model.addAttribute("nickname", loginMember.getNickname());
@@ -79,13 +78,13 @@ public class CookieController {
         LOGGER.info("join post mapping 전역 log");
 
         //loingId duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
-        if(memberServiceimpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
+        if(memberServiceImpl.checkLoginIdDuplicate(joinRequest.getLoginId())){
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
         }
 
 
         //nickName duplication check | 여기서 get으로 꺼내려고할 때 값이 만약에 없으면 NPE 뜨니까 이 해결 방법 고안
-        if(memberServiceimpl.checkNicknameDuplicate(joinRequest.getNickname())){
+        if(memberServiceImpl.checkNicknameDuplicate(joinRequest.getNickname())){
             bindingResult.addError(new FieldError("joinRequest", "nickname", "닉네임이 중복됩니다."));
         }
 
@@ -98,7 +97,7 @@ public class CookieController {
             return "join";
         }
 
-        memberServiceimpl.join(joinRequest);
+        memberServiceImpl.join(joinRequest);
         return "redirect:/cookie-login";
     }
     
@@ -122,7 +121,7 @@ public class CookieController {
     public String loginRequest(@ModelAttribute LoginRequest loginRequest, 
         BindingResult bindingResult, HttpServletResponse response, Model model) {
 
-        Member member = memberServiceimpl.login(loginRequest);
+        Member member = memberServiceImpl.login(loginRequest);
         
         // member가 존재 하지 않거나 password, passwordCheck이 일치하지 않을 경우 service에서 null을 반환
         if(member == null){
@@ -167,7 +166,7 @@ public class CookieController {
         LOGGER.info("유저 페이지 호출 확인=========================");
         // LOGGER.info("Raw cookie memberId = {}", cookie.memberId);
 
-        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
 
         // LOGGER.info(loginMember.memberId);
 
@@ -186,7 +185,7 @@ public class CookieController {
     @GetMapping("/admin")
     public String adminPage(@CookieValue(name = "memberId", required=false)Long memberId, Model model) {
 
-        Member loginMember = memberServiceimpl.getLoginMemberById(memberId);
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
 
         if(loginMember == null){
             return "redirect:/cookie-login/login";
