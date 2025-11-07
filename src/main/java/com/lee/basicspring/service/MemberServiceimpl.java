@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberServiceimpl implements MemberService{
+public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     // private final BCryptPasswordEncoder encoder;
