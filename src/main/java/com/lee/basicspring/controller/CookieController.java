@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cookie-login")
-public class CookieController extends CookieControllerAdvice{
+public class CookieController {
     
 
     private final MemberServiceImpl memberServiceimpl;
