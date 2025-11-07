@@ -6,11 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
@@ -23,12 +19,18 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/session-login")
 public class SessionController {
 
+    public static Hashtable sessionList = new Hashtable();
     private final MemberServiceImpl memberServiceImpl;
     private final Logger LOGGER = LoggerFactory.getLogger((SessionController.class));
 
@@ -187,7 +189,17 @@ public class SessionController {
 
         return "admin";
     }
-    
-    
+
+    @GetMapping("/session-list")
+    @ResponseBody
+    public Map<String, String> sessionList() {
+        Enumeration elements = sessionList.elements();
+        Map<String, String> lists = new HashMap<>();
+        while(elements.hasMoreElements()) {
+            HttpSession session = (HttpSession)elements.nextElement();
+            lists.put(session.getId(), String.valueOf(session.getAttribute("userId")));
+        }
+        return lists;
+    }
 
 }
