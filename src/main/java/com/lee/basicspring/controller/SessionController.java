@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
+import com.lee.basicspring.data.entity.type.MemberRole;
 import com.lee.basicspring.service.MemberServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,18 +24,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
-
-
-
-
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/session-login")
 public class SessionController {
 
     private final MemberServiceImpl memberServiceImpl;
-    private final Logger LOGGER = LoggerFactory.getLogger((CookieController.class));
+    private final Logger LOGGER = LoggerFactory.getLogger((SessionController.class));
 
     /* 
      * home page get request
@@ -43,7 +38,7 @@ public class SessionController {
      */
     @GetMapping(value={"", "/"})
     public String home(Model model, @SessionAttribute(name="memberId", required=false) Long memberId) {
-
+        LOGGER.info("home page request =====================");
         Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
 
         if(loginMember != null){
@@ -104,6 +99,7 @@ public class SessionController {
      */
     @GetMapping("/login")
     public String loginPage(Model model) {
+        LOGGER.info("login page 요청===============");
         model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }
@@ -113,8 +109,12 @@ public class SessionController {
      * create Session 
      */
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult, HttpServletRequest httpServletRequest, Model model) {
+    public String login(@ModelAttribute LoginRequest loginRequest,
+                        BindingResult bindingResult, HttpServletRequest httpServletRequest, Model model) {
+        LOGGER.info("login post 요청 =======================");
+
         Member member = memberServiceImpl.login(loginRequest);
+        LOGGER.info(String.valueOf(member.getMemberId() + "==================="));
 
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
         if(member == null){
@@ -129,7 +129,7 @@ public class SessionController {
         httpServletRequest.getSession().invalidate();
         HttpSession session = httpServletRequest.getSession(true);
         //세션에 memberId 를 넣어준다.
-        session.setAttribute("memberId", member.getLoginId());
+        session.setAttribute("memberId", member.getMemberId());
         session.setMaxInactiveInterval(1800); //30분 동안 유지
 
         return "redirect:/session-login";
@@ -140,24 +140,52 @@ public class SessionController {
      * Logout - GET
      */
     @GetMapping("/logout")
-    public String logout(@RequestParam String param) {
-        return new String();
+    public String logout(HttpServletRequest request, Model model) {
+        //세션이 없으면 null return
+        HttpSession session = request.getSession(false);
+        //session이 있는 경우 invalidate를 통해 세션에 저장된 모든 속성을 제거하고 더 이상 사용할 수 없게 만들어준다.
+        if(session != null){
+            session.invalidate();
+        }
+        return "redirect:/session-login";
     }
 
     /* 
      * info - GET
      */
     @GetMapping("/info")
-    public String infoPage(@RequestParam String param) {
-        return new String();
+    public String infoPage(@SessionAttribute(name = "memberId", required = false) Long memberId, Model model) {
+        // session에서 memberId를 꺼내서, 해당 memberId로 하는 member 객체를 꺼내어 loginMember 객체에 할당
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
+
+        // memberId로 객체를 꺼내오지 못했을 경우 home(session-login) 경로로 redirect
+        if(loginMember == null){
+            return "redirect:/session-login";
+        }
+        //login 된 member 객체 model에 담아서 info page 반환
+        model.addAttribute("user", loginMember);
+        return "info";
     }
     
     /* 
      * admin - GET
      */
     @GetMapping("/admin")
-    public String adminPage(@RequestParam String param) {
-        return new String();
+    public String adminPage(@SessionAttribute(name = "memberId", required = false) Long memberId, Model model) {
+
+        // session에서 memberId를 꺼내서, 해당 memberId로 하는 member 객체를 꺼내어 loginMember 객체에 할당
+        Member loginMember = memberServiceImpl.getLoginMemberById(memberId);
+
+        // memberId로 객체를 꺼내오지 못했을 경우 home(session-login) 경로로 redirect
+        if(loginMember == null){
+            return "redirect:/session-login";
+        }
+        // 꺼내온 member 객체의 Role를 꺼내어 admin 페이지에 접근 가능한 Role인지 확인한다.
+        if(!loginMember.getRole().equals(MemberRole.ADMIN)){
+            return "redirect:/session-login";
+        }
+
+        return "admin";
     }
     
     
