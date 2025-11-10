@@ -1,4 +1,4 @@
-package com.lee.basicspring.security;
+package com.lee.basicspring.security.auth;
 
 import com.lee.basicspring.data.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
