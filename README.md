@@ -1,6 +1,6 @@
 # 🌱 <span style="color:#1F618D"><b>Spring Boot 회원/로그인 프로젝트</b></span>
 
-본 프로젝트는 Cookie, Session 회원가입, 로그인, 권한별 접근제어, 유저 정보 반환을 구현한 예제입니다.
+본 프로젝트는 Cookie, Session, Spring Security 회원가입, 로그인, 권한별 접근제어, 유저 정보 반환을 구현한 예제입니다.
 
 ---
 
@@ -85,8 +85,27 @@ session.setMaxInactiveInterval(1800);
 - getSession(true) → 세션이 없으면 새로 생성
 - getSession(false) → 세션이 없으면 null 반환
 
+### 5️⃣ 🔒 security를 통한 로그인
 
-### 5️⃣ <span style="color:#CD6155"><b>권한 관리 (ADMIN/USER)</b></span>
+| 구성요소                      | 역할                                      |
+| ------------------------- | --------------------------------------- |
+| `SecurityConfig`          | 보안 필터 체인 및 HTTP 요청 접근 규칙 설정             |
+| `PrincipalDetails`        | 사용자 정보를 담는 클래스 (`UserDetails` 구현체)      |
+| `PrincipalDetailsService` | 사용자 인증 로직 수행 (`UserDetailsService` 구현체) |
+| `BCryptPasswordEncoder`   | 비밀번호 암호화 및 검증 수행                        |
+| `MemberRole`              | 사용자 권한 Enum (ADMIN / USER)              |
+
+#### ✅ <span style="color:#1ABC9C">요약</span>
+| 항목  | 내용                                  |
+| --- | ----------------------------------- |
+| 인증  | `UserDetailsService`에서 사용자 검증       |
+| 인가  | `hasAuthority()`로 권한(Role) 제어       |
+| 세션  | Security가 자동 관리 (Authentication 기반) |
+| 암호화 | BCryptPasswordEncoder               |
+| UI  | Thymeleaf로 로그인/회원가입/권한별 화면 구성       |
+
+
+### 6️⃣<span style="color:#CD6155"><b>권한 관리 (ADMIN/USER)</b></span>
 
 - 회원 엔티티에 <span style="color:#CB4335"><b>role</b></span> 필드 추가, Enum으로 분기.
 - 관리자 페이지는 로그인 회원의 Role이 <span style="color:#229954"><b>ADMIN</b></span>일 때만 접근 허용.
@@ -104,6 +123,9 @@ session.setMaxInactiveInterval(1800);
 
 ### 🗝️ 세션 로그인 실행시
 4. 브라우저에서 <span style="color:#2874A6">/session-login</span> 접속
+
+### 🔒 스프링 시큐리티 로그인 실행시
+4. 브라우저에서 <span style="color:#2874A6">/security-login</span> 접속
 
 ---
 
