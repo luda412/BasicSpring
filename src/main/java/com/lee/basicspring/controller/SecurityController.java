@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/security-login")
-public class SecurityContorller {
+public class SecurityController {
 
     private final MemberServiceImpl memberServiceImpl;
 
@@ -71,10 +71,31 @@ public class SecurityContorller {
         return "redirect:/security-login";
     }
 
+    //로그인 page 요청
     @GetMapping("/login")
     public String loginPage(Model model){
         model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }
+
+    //info 페이지 요청
+    @GetMapping("/info")
+    public String infoPage(Model model, Authentication auth){
+        Member loginMember = memberServiceImpl.getLoginMemberByLoginId(auth.getName());
+
+        if(loginMember == null){
+            return  "redirect:/security-login/login";
+        }
+
+        model.addAttribute("user", loginMember);
+        return "info";
+    }
+
+    //admin 페이지 요청
+    @GetMapping("/admin")
+    public String adminPage (Model model){
+        return "admin";
+    }
+
 
 }
