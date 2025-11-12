@@ -1,16 +1,38 @@
-// package com.lee.basicspring.config;
+package com.lee.basicspring.config;
 
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.lee.basicspring.data.entity.type.MemberRole;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
 
-// @Configuration
-// public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/security-login/info").authenticated()
+                        .requestMatchers("/security-login/admin/**").hasAuthority(MemberRole.ADMIN.name())
+                        .anyRequest().permitAll()
+                )
+                .formLogin(login -> login
+                        .usernameParameter("loginId")
+                        .passwordParameter("password")
+                        .loginPage("/security-login/login")
+                        .defaultSuccessUrl("/security-login")
+                        .failureUrl("/security-login/login")
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/security-login/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                );
 
-//     @Bean
-//     public BCryptPasswordEncoder bCryptPasswordEncoder(){
-//         return new BCryptPasswordEncoder();
-//     }
-    
-// }
+        return http.build();
+    }
+}
