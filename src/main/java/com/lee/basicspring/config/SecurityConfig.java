@@ -1,6 +1,7 @@
 package com.lee.basicspring.config;
 
 import com.lee.basicspring.data.entity.type.MemberRole;
+import com.lee.basicspring.security.jwt.JwtTokenFilter;
 import com.lee.basicspring.security.jwt.JwtTokenUtil;
 import com.lee.basicspring.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -47,15 +50,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(new JwtTokenFilter(memberServiceImpl, scretKey), UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests()
-                .antMatchers("/jwt-login/info").authenticated()
-                .antMatchers("/jwt-login/admin/**").hasAuthority(MemberRole.ADMIN.name())
-                .and().build();
+                .httpBasic(http -> http.disable())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(STATELESS)
+                )
+                .addFilterBefore(
+                        new JwtTokenFilter(memberServiceImpl, scretKey),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/jwt-login/info").authenticated()
+                        .requestMatchers("/jwt-login/admin/**").hasAuthority(MemberRole.ADMIN.name())
+                        .anyRequest().permitAll()
+                )
+                .build();
     }
 
 
