@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
-     private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
     /* When processing Join, check duplication LoginId wrote by User
      * DataBase Access, Consider readOnly option | If already exist loginId, return result is true
@@ -49,10 +49,10 @@ public class MemberServiceImpl implements MemberService{
     /* When processing Join, save entity object to Database
      * DataBase Access, Consider transactional option | have to save encoded passwords
      */
-     @Override
-     public void joinEncoder(JoinRequest req) {
-         memberRepository.save(req.toEntity(encoder.encode(req.getPassword())));
-     }
+    @Override
+    public void joinEncoder(JoinRequest req) {
+        memberRepository.save(req.toEntity(encoder.encode(req.getPassword())));
+    }
 
     /* 
      * member 가 없어도 null, 비밀번호가 같지 않아도 null 이니까 넘기는 controller로 넘기는 값이 null로 같으면 안됨.

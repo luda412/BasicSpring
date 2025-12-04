@@ -8,11 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class PrincipalDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
+    @Transactional
 
     //의문점 어댑터 패턴? 으로 member를 return할 때 왜 principalDetails로 감싸서 넘겨야하는가?
     @Override
