@@ -11,7 +11,7 @@ public interface MemberService {
 
     void join(JoinRequest req);
 
-     void joinEncoder(JoinRequest req);
+    void joinEncoder(JoinRequest req);
 
     Member login(LoginRequest req);
 
