@@ -1,28 +1,28 @@
 package com.lee.basicspring.security.jwt;
 
-import com.lee.basicspring.data.entity.Member;
-import com.lee.basicspring.service.MemberServiceImpl;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.ServletException;
-import java.io.IOException;
+
+import com.lee.basicspring.data.entity.Member;
+import com.lee.basicspring.service.MemberServiceImpl;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final MemberServiceImpl memberServiceImpl;
-    private final String secretKey;
+    // private final String secretKey; // JwtTokenUtil 내부에서 키를 관리하므로 더 이상 필요 없음
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,20 +44,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = authorizationHeader.split(" ")[1];
         
         //전송 받은 Jwt Token이 만료되었스면 => 다음 필터 진행 (인증 x)
-        if(JwtTokenUtil.isExpired(token, secretKey)){
+        if(JwtTokenUtil.isExpired(token)){
             filterChain.doFilter(request, response);
             return;
         }
 
         //Jwt Token에서 loginId 추출
-        String loginId = JwtTokenUtil.getLoginId(token, secretKey);
+        String loginId = JwtTokenUtil.getLoginId(token);
 
         //추출한 loginId로 User 찾아오기
         Member loginMember = memberServiceImpl.getLoginMemberByLoginId(loginId);
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginMember.getLoginId(), null, List.of(new SimpleGrantedAuthority(loginMember.getRole().name())));
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        loginMember.getLoginId(), // 또는 loginMember 자체를 principal로 써도 됨
+                        null,
+                        List.of(new SimpleGrantedAuthority(loginMember.getRole().name()))
+                );
 
         //권한 부여
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
