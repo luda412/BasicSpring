@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
 
-    // 스프링 부트 기본 의존성들
+// 스프링 부트 기본 의존성들
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -36,26 +36,28 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    // ★ MySQL – runtimeOnly만 있으면 충분함
+    // ★ JJWT 최신 버전 (0.11.5)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // MySQL
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // ★ Lombok (메인 소스)
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    // ★ Lombok (테스트 코드)
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     // devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // 스프링 설정 프로세서 (선택)
+    // 설정 프로세서
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    // 테스트 의존성
+    // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
