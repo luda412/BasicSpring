@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = optionalMember.get();
 
-        if(!member.getPassword().equals(req.getPassword())){
+        if(!encoder.matches(req.getPassword(), member.getPassword())){
             return null;
             // consider about instead of null
         }
