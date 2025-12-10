@@ -3,6 +3,8 @@ package com.lee.basicspring.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.lee.basicspring.data.dto.PetDto;
@@ -13,16 +15,21 @@ import com.lee.basicspring.repository.PetRepository;
 import com.lee.basicspring.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     
+    private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
     private final PetRepository petRepository;
 
     @Override
     public UserDto createUser(UserDto dto) {
+        LOGGER.info("서비스 호출: createUser");
         User user = User.builder()
             .name(dto.getName())
             .age(dto.getAge())
@@ -45,6 +52,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserDto> getAllUsers() {
+        LOGGER.info("서비스 호출: getAllUsers");
         return userRepository.findAll().stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
@@ -52,6 +60,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto getUser(Long id) {
+        LOGGER.info("서비스 호출: getUser with id {}", id);
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
         return convertToDto(user);
