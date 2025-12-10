@@ -5,7 +5,6 @@ import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.data.entity.type.MemberRole;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 public class JoinRequest {
     
     @NotBlank(message= "로그인 아이디가 비어있습니다.")
