@@ -1,26 +1,25 @@
 package com.lee.basicspring.config;
 
-import com.lee.basicspring.data.entity.type.MemberRole;
-import com.lee.basicspring.security.jwt.JwtTokenFilter;
-import com.lee.basicspring.security.jwt.JwtTokenUtil;
-import com.lee.basicspring.service.MemberServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import com.lee.basicspring.data.entity.type.MemberRole;
+import com.lee.basicspring.security.jwt.JwtTokenFilter;
+import com.lee.basicspring.service.MemberServiceImpl;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final MemberServiceImpl memberServiceImpl;
-    private static String scretKey = "my-secret-key-123123";
+//     private static String scretKey = "my-secret-key-123123";
 
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,7 +55,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(STATELESS)
                 )
                 .addFilterBefore(
-                        new JwtTokenFilter(memberServiceImpl, scretKey),
+                        new JwtTokenFilter(memberServiceImpl),
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .authorizeHttpRequests(auth -> auth
