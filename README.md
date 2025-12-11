@@ -1,6 +1,6 @@
 # 🌱 <span style="color:#1F618D"><b>Spring Boot 회원/로그인 프로젝트</b></span>
 
-본 프로젝트는 Cookie, Session, Spring Security 회원가입, 로그인, 권한별 접근제어, 유저 정보 반환을 구현한 예제입니다.
+본 프로젝트는 Cookie, Session, Spring Security, Jwt 회원가입, 로그인, 권한별 접근제어, 유저 정보 반환을 구현한 예제입니다.
 
 ---
 
@@ -17,7 +17,7 @@
 
 | <span style="color:#4C566A"><b>패키지/클래스</b></span>    | <span style="color:#4C566A"><b>주요 역할</b></span>                        |
 |---------------------------|------------------------------------------|
-| config | Spring Security 설정, 비밀번호 인코더 Bean 등록 |
+| config | Spring Security, JWT 설정, 비밀번호 인코더 Bean 등록 |
 | contorllerAdvice| ControllerHelper, view 모델 속성 공통 처리              |
 | controller | 회원/로그인/홈/어드민 컨트롤러, 쿠키 처리, session 처리         |
 | service| 회원 서비스 interface, implements, 비밀번호 인코딩, DB 연동              |
@@ -105,7 +105,21 @@ session.setMaxInactiveInterval(1800);
 | UI  | Thymeleaf로 로그인/회원가입/권한별 화면 구성       |
 
 
-### 6️⃣<span style="color:#CD6155"><b>권한 관리 (ADMIN/USER)</b></span>
+### 6️⃣ 🪙 Jwt를 통한 로그인
+
+- `JwtTokenUtil`클래스에서 로그인 성공 시 JWT를 생성하고, 이후 요청에서 토큰을 검증하거나 로그인 ID를 추출할 때 사용하는 정적 유틸리티 클래스
+
+| <span style="color:#4C566A"><b>메서드</b></span> | <span style="color:#4C566A"><b>역할</b></span> | <span style="color:#4C566A"><b>리턴값</b></span> | <span style="color:#4C566A"><b>접근제어자</b></span> |
+| --------------------------------------------- | -------------------------------------------- | --------------------------------------------- | ----------------------------------------------- |
+| createToken()                                 | 로그인 ID 와 만료 시간을 기반으로 JWT 생성                  | String (JWT 문자열)                              | public static                                   |
+| getLoginId()                                  | JWT 의 Claims 에서 로그인 ID 추출                    | String                                        | public static                                   |
+| isExpired()                                   | 토큰의 만료 시간을 확인하여 만료 여부 체크                     | boolean                                       | public static                                   |
+| extractClaims()                               | 서명 키로 JWT 를 파싱해 payload(Claims) 추출           | Claims 객체                                     | private static                                  |
+
+- 컨트롤러에서 로그인 성공 시 `createToken(loginId, expireTimeMs)`로 토큰을 발급하고, 응답 바디로 클라이언트에 전달
+- 이후 요청에서는 필터에서 `isExpired(token)`으로 만료 여부를 확인하고, `getLoginId(token)`으로 로그인 ID를 얻은 뒤, DB에서 회원 정보를 조회해 인증 컨텐스트에 넣음
+
+### 7️⃣ <span style="color:#CD6155"><b>권한 관리 (ADMIN/USER)</b></span>
 
 - 회원 엔티티에 <span style="color:#CB4335"><b>role</b></span> 필드 추가, Enum으로 분기.
 - 관리자 페이지는 로그인 회원의 Role이 <span style="color:#229954"><b>ADMIN</b></span>일 때만 접근 허용.
@@ -126,6 +140,9 @@ session.setMaxInactiveInterval(1800);
 
 ### 🔒 스프링 시큐리티 로그인 실행시
 4. 브라우저에서 <span style="color:#2874A6">/security-login</span> 접속
+
+### 🪙 Jwt 로그인 실행시
+4. 포스트맨에서 <span style="color:#2874A6">/jwt-login/login</span> 으로 토큰 발급 받은 후 Authorization에 Bearer{토큰값}
 
 ---
 
