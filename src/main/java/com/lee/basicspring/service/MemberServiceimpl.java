@@ -98,7 +98,6 @@ public class MemberServiceImpl implements MemberService{
 
         Optional<Member> optionalMember = memberRepository.findByLoginId(loginId);
         if(optionalMember.isEmpty()) return null;
-
         return optionalMember.get();
     }
 
