@@ -1,45 +1,52 @@
 package com.lee.basicspring.security.jwt;
 
+import java.security.Key;
+import java.util.Date;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
-import java.util.Date;
+import io.jsonwebtoken.security.Keys;
 
 public class JwtTokenUtil {
-    
-    //JWT Token 발급
-    public static String createToken(String loginId, String key, long expireTimeMs){
-        //Claim = Jwt Token에 들어갈 정보
-        //Claim에 loginId를 넣어 줌으로써 나중에 longinId를 꺼낼 수 있도록 함.
-        Claims claims = Jwts.claims();
-        claims.put("loginId", loginId);
+
+    // 32바이트 이상으로 충분히 길게
+    private static final String SECRET_KEY =
+            "bXktc2VjcmV0LWtleS0xMjMxMjMtbXktc2VjcmV0LWtleS0xMjMxMjM=";
+
+    private static final Key SIGNING_KEY =
+            Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+
+    // JWT Token 발급
+    public static String createToken(String loginId, long expireTimeMs) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + expireTimeMs);
 
         return Jwts.builder()
-                .setClaims(claims) // 이때 위에서 put해준 loginId가 들어감.
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
-                .signWith(SignatureAlgorithm.HS256, key)
+                .setSubject(loginId)
+                .claim("loginId", loginId)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(SIGNING_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    //Claims에서 loginId 꺼내기
-    public static String getLoginId(String token, String secretKey){
-        return extractClaims(token, secretKey).get("loginId").toString();
+    // Claims에서 loginId 꺼내기
+    public static String getLoginId(String token) {
+        return extractClaims(token).get("loginId").toString();
     }
 
-    //발급된 Token이 만료 시간이 지났는지 체크
-    public static boolean isExpired(String token, String secretKey){
-        Date expiredDate = extractClaims(token, secretKey).getExpiration();
-        // Token의 만료 날짜가 지금보다 이전인지 check .before 메서드는 이 날짜가 인자로 주어진 날짜보다 과거인지를 비교한다. 즉 false이면 아직 유효, true이면 만료됨
+    // 발급된 Token이 만료 시간이 지났는지 체크
+    public static boolean isExpired(String token) {
+        Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
     }
 
-    private static Claims extractClaims(String token, String secretKey){
-        return Jwts.parser()
-                .setSigningKey(secretKey)
+    private static Claims extractClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(SIGNING_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-
 }
