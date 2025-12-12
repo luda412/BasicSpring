@@ -1,17 +1,25 @@
 package com.lee.basicspring.security.auth;
 
 import com.lee.basicspring.data.entity.Member;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class PrincipalDetails implements UserDetails {
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
+public class PrincipalDetails implements UserDetails, OAuth2User{
     private Member member;
+    
+    private Map<String, Object> attributes;
 
-    public PrincipalDetails(Member member){
+
+    public PrincipalDetails(Member member, Map<String, Object> attributes){
         this.member = member;
+        this.attributes = attributes;
     }
 
     //권한 관련 작업을 하기 위한 role return
