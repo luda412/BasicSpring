@@ -1,10 +1,5 @@
 package com.lee.basicspring.config;
 
-import com.lee.basicspring.data.entity.type.MemberRole;
-import com.lee.basicspring.security.jwt.JwtTokenFilter;
-import com.lee.basicspring.service.MemberServiceImpl;
-import com.lee.basicspring.service.PrincipalOAuth2UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,7 +7,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import com.lee.basicspring.data.entity.type.MemberRole;
+import com.lee.basicspring.security.jwt.JwtTokenFilter;
+import com.lee.basicspring.service.MemberServiceImpl;
+import com.lee.basicspring.service.PrincipalOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -29,9 +29,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 // 세션을 사용하지 않는 JWT 기반 설정
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(STATELESS)
-                )
+                // .sessionManagement(session ->
+                //         session.sessionCreationPolicy(STATELESS)
+                // )
 
                 // JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
                 .addFilterBefore(
