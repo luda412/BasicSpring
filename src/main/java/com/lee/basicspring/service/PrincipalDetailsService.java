@@ -14,9 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PrincipalDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
-    @Transactional
+    
 
     //의문점 어댑터 패턴? 으로 member를 return할 때 왜 principalDetails로 감싸서 넘겨야하는가?
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByLoginId(username)

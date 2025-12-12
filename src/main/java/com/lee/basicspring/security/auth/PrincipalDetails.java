@@ -16,11 +16,16 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
     
     private Map<String, Object> attributes;
 
-
+    // security 일반 로그인 용
+    public PrincipalDetails(Member member){
+        this.member = member;
+    }
+    //OAuth 로그인 용
     public PrincipalDetails(Member member, Map<String, Object> attributes){
         this.member = member;
         this.attributes = attributes;
     }
+
     
 
     //권한 관련 작업을 하기 위한 role return
@@ -73,7 +78,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
     @Override
     public Map<String, Object> getAttributes() {
         // TODO Auto-generated method stub
-        return null;
+        return attributes;
     }
 
 
