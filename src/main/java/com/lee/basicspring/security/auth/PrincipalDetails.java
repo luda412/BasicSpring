@@ -21,6 +21,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
         this.member = member;
         this.attributes = attributes;
     }
+    
 
     //권한 관련 작업을 하기 위한 role return
     @Override
@@ -66,5 +67,19 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    // OAuth2User의 메서드 Override
+    @Override
+    public Map<String, Object> getAttributes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
