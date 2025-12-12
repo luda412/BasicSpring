@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lee.basicspring.data.dto.UserDto;
-import com.lee.basicspring.service.UserService;
+import com.lee.basicspring.service.interfaces.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
