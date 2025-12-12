@@ -27,5 +27,8 @@ public class Member {
     private String nickname;
 
     private MemberRole role;
-    
+
+    // For OAuth google login
+    private String provider;
+    private String providerId;
 }
