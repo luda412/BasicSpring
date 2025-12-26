@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
+import com.lee.basicspring.service.interfaces.UserService;
 import com.lee.basicspring.data.dto.PetDto;
 import com.lee.basicspring.data.dto.UserDto;
 import com.lee.basicspring.data.entity.Pet;

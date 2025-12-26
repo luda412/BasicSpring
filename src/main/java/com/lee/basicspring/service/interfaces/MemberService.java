@@ -1,4 +1,4 @@
-package com.lee.basicspring.service;
+package com.lee.basicspring.service.interfaces;
 
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;

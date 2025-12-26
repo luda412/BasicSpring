@@ -1,18 +1,32 @@
 package com.lee.basicspring.security.auth;
 
 import com.lee.basicspring.data.entity.Member;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class PrincipalDetails implements UserDetails {
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
+public class PrincipalDetails implements UserDetails, OAuth2User{
     private Member member;
+    
+    private Map<String, Object> attributes;
 
+    // security 일반 로그인 용
     public PrincipalDetails(Member member){
         this.member = member;
     }
+    //OAuth 로그인 용
+    public PrincipalDetails(Member member, Map<String, Object> attributes){
+        this.member = member;
+        this.attributes = attributes;
+    }
+
+    
 
     //권한 관련 작업을 하기 위한 role return
     @Override
@@ -58,5 +72,19 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    // OAuth2User의 메서드 Override
+    @Override
+    public Map<String, Object> getAttributes() {
+        // TODO Auto-generated method stub
+        return attributes;
+    }
+
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

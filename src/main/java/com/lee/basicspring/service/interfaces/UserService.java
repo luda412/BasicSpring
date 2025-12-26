@@ -1,4 +1,4 @@
-package com.lee.basicspring.service;
+package com.lee.basicspring.service.interfaces;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package com.lee.basicspring.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lee.basicspring.service.MemberService;
+import com.lee.basicspring.service.interfaces.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
