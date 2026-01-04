@@ -4,11 +4,12 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.lee.basicspring.service.interfaces.MemberService;
+
 import com.lee.basicspring.data.dto.JoinRequest;
 import com.lee.basicspring.data.dto.LoginRequest;
 import com.lee.basicspring.data.entity.Member;
 import com.lee.basicspring.repository.MemberRepository;
+import com.lee.basicspring.service.interfaces.MemberService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,8 @@ public class MemberServiceImpl implements MemberService{
 
     /* When processing Join, save entity object to Database
      * DataBase Access, Consider transactional option | have to save encoded passwords
+
+    
      */
     @Override
     public void joinEncoder(JoinRequest req) {
